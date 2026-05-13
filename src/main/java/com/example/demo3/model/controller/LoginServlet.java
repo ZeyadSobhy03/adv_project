@@ -8,6 +8,7 @@ import java.io.IOException;
 import com.example.demo3.model.dao.UserDAO;
 import com.example.demo3.model.service.AuthService;
 import com.example.demo3.model.service.RateLimiter;
+import com.example.demo3.model.service.RedisCacheService;
 import com.example.demo3.model.util.AppConstants;
 import com.example.demo3.model.util.JwtUtil;
 
@@ -15,6 +16,7 @@ import com.example.demo3.model.util.JwtUtil;
 public class LoginServlet extends HttpServlet {
   private final UserDAO userDAO = new UserDAO();
   private final AuthService authService = new AuthService(userDAO);
+  private final RedisCacheService redisCacheService = new RedisCacheService();
   private static final RateLimiter RATE_LIMITER = new RateLimiter();
   private static final int MAX_REQUESTS = 5;
   private static final long WINDOW_MILLIS = 10_000L;
@@ -54,7 +56,9 @@ public class LoginServlet extends HttpServlet {
         response.addCookie(jwtCookie);
 
 
-                // redirect to product listing servlet
+				redisCacheService.revokeJwt("active:" + token, java.time.Duration.ofSeconds(30));
+
+
                 response.sendRedirect(request.getContextPath() + "/products");
             } else {
                 response.sendRedirect(request.getContextPath() + "/login.jsp?error=1");
