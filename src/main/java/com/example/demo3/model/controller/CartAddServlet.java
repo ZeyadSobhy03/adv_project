@@ -21,7 +21,7 @@ public class CartAddServlet extends HttpServlet {
 	private static final long WINDOW_MILLIS = 10_000L;
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		String ip = req.getRemoteAddr();
+		String ip = req.getRemoteAddr(); // get ip of user
 		String key = "cart:add:" + (ip == null ? "unknown" : ip);
 		if (!RATE_LIMITER.allow(key, MAX_REQUESTS, WINDOW_MILLIS)) {
 			resp.sendError(429, "Too many requests. Please wait a few seconds and try again.");

@@ -6,11 +6,9 @@ import java.sql.SQLException;
 
 public final class DatabaseConfig {
 	static {
-		// Ensure the JDBC driver is loaded/registered when running in a servlet container.
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		} catch (ClassNotFoundException ignored) {
-			// If the driver isn't on the classpath, getConnection() will fail with a clear message.
 		}
 	}
 
@@ -36,7 +34,7 @@ public final class DatabaseConfig {
 	public static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(getUrl(), getUser(), getPassword());
 	}
-
+// that get port number
 	private static String getEnvOrDefault(String key, String fallback) {
 		String value = System.getenv(key);
 		if (value == null || value.trim().isEmpty()) {

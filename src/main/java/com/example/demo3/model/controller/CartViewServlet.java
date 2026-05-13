@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
-
+// cart view
 @WebServlet("/cart")
 public class CartViewServlet extends HttpServlet {
 	private static final RateLimiter RATE_LIMITER = new RateLimiter();

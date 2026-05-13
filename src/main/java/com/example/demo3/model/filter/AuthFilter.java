@@ -14,11 +14,13 @@ import jakarta.servlet.http.Cookie;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.example.demo3.model.service.RedisCacheService;
 import com.example.demo3.model.util.AppConstants;
 import com.example.demo3.model.util.JwtUtil;
 
 @WebFilter(urlPatterns = {"/products"})
 public class AuthFilter implements Filter {
+	private final RedisCacheService redisCacheService = new RedisCacheService();
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -33,7 +35,7 @@ public class AuthFilter implements Filter {
 		HttpSession session = httpRequest.getSession(false);
 		Object loggedInUser = session == null ? null : session.getAttribute(AppConstants.SESSION_LOGGED_IN_USER);
 
-		// If no session user, try stateless JWT cookie
+		// If no session user, try stateless JWT cookie (and ensure it is NOT revoked in Redis)
 		if (loggedInUser == null) {
 			String token = null;
 			Cookie[] cookies = httpRequest.getCookies();
@@ -46,7 +48,7 @@ public class AuthFilter implements Filter {
 				}
 			}
 
-			if (token != null && !token.trim().isEmpty()) {
+			if (token != null && !token.trim().isEmpty() && !redisCacheService.isJwtRevoked(token)) {
 				Optional<String> username = JwtUtil.verifyAndGetUsername(token, AppConstants.JWT_SECRET);
 				if (username.isPresent()) {
 					HttpSession newSession = httpRequest.getSession(true);
@@ -55,6 +57,7 @@ public class AuthFilter implements Filter {
 				}
 			}
 		}
+
 
 		if (loggedInUser == null) {
 			httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.jsp");

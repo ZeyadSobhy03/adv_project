@@ -10,6 +10,27 @@ public final class JwtUtil {
 	private JwtUtil() {
 	}
 
+
+	public static Optional<Long> extractExpiresAtMillis(String token) {
+		if (ValidationUtil.isBlank(token)) {
+			return Optional.empty();
+		}
+		String[] parts = token.split("\\.");
+		if (parts.length != 2) {
+			return Optional.empty();
+		}
+		try {
+			String payload = new String(Base64.getUrlDecoder().decode(parts[0]), StandardCharsets.UTF_8);
+			String[] payloadParts = payload.split(":", 2);
+			if (payloadParts.length != 2) {
+				return Optional.empty();
+			}
+			return Optional.of(Long.parseLong(payloadParts[1]));
+		} catch (Exception ignored) {
+			return Optional.empty();
+		}
+	}
+
 	public static String issueToken(String username, long ttlSeconds, String secret) {
 		long expiresAt = System.currentTimeMillis() + (ttlSeconds * 1000L);
 		String payload = username + ":" + expiresAt;

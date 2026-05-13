@@ -3,6 +3,7 @@ package com.example.demo3.model.controller;
 import com.example.demo3.model.dao.UserDAO;
 import com.example.demo3.model.service.AuthService;
 import com.example.demo3.model.service.RateLimiter;
+import com.example.demo3.model.util.AppConstants;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,7 +52,7 @@ public class RegisterServlet extends HttpServlet {
 				return;
 			}
 
-			req.getSession(true).setAttribute("loggedInUser", username);
+			req.getSession(true).setAttribute(AppConstants.SESSION_LOGGED_IN_USER, username);
 			resp.sendRedirect(req.getContextPath() + "/products");
 
 		} catch (Exception e) {

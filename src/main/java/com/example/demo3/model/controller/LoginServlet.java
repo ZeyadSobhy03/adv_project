@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
             boolean valid = authService.login(username, password);
 
             if (valid) {
-                request.getSession(true).setAttribute("loggedInUser", username);
+                request.getSession(true).setAttribute(AppConstants.SESSION_LOGGED_IN_USER, username);
 
         // Determine admin role from DB
         boolean isAdmin = false;
@@ -45,14 +45,14 @@ public class LoginServlet extends HttpServlet {
         }
         request.getSession(true).setAttribute("isAdmin", isAdmin);
 
-                // Also issue a JWT (stateless) and store it in an HttpOnly cookie
-                String token = JwtUtil.issueToken(username, AppConstants.JWT_TTL_SECONDS, AppConstants.JWT_SECRET);
-                Cookie jwtCookie = new Cookie(AppConstants.JWT_COOKIE_NAME, token);
-                jwtCookie.setHttpOnly(true);
-                jwtCookie.setPath(request.getContextPath().isEmpty() ? "/" : request.getContextPath());
-                // 1 hour
-                jwtCookie.setMaxAge((int) AppConstants.JWT_TTL_SECONDS);
-                response.addCookie(jwtCookie);
+        // Issue a JWT (stateless) and store it in an HttpOnly cookie
+        String token = JwtUtil.issueToken(username, AppConstants.JWT_TTL_SECONDS, AppConstants.JWT_SECRET);
+        Cookie jwtCookie = new Cookie(AppConstants.JWT_COOKIE_NAME, token);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath(request.getContextPath().isEmpty() ? "/" : request.getContextPath());
+        jwtCookie.setMaxAge((int) AppConstants.JWT_TTL_SECONDS);
+        response.addCookie(jwtCookie);
+
 
                 // redirect to product listing servlet
                 response.sendRedirect(request.getContextPath() + "/products");

@@ -2,6 +2,7 @@ package com.example.demo3.model.controller;
 
 import com.example.demo3.model.dao.ReviewDAO;
 import com.example.demo3.model.service.RateLimiter;
+import com.example.demo3.model.util.AppConstants;
 import com.example.demo3.model.util.ValidationUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class ReviewServlet extends HttpServlet {
 			resp.sendError(429, "Too many requests. Please wait a few seconds and try again.");
 			return;
 		}
-		Object userObj = req.getSession(false) == null ? null : req.getSession(false).getAttribute("loggedInUser");
+		Object userObj = req.getSession(false) == null ? null : req.getSession(false).getAttribute(AppConstants.SESSION_LOGGED_IN_USER);
 		if (userObj == null) {
 			resp.sendRedirect(req.getContextPath() + "/login.jsp?message="
 					+ java.net.URLEncoder.encode("Please login to add a review", java.nio.charset.StandardCharsets.UTF_8));

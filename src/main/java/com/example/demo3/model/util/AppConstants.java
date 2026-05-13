@@ -12,5 +12,6 @@ public final class AppConstants {
 	public static final String JWT_SECRET = "secret-change-me";
 	public static final long JWT_TTL_SECONDS = 60L * 60L; // 1 hour
 
+
 }
 
